@@ -1,4 +1,5 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
+import { filterCourses } from './course-filter';
 
 export interface CourseModule {
   title: string;
@@ -13,9 +14,6 @@ export interface Course {
   category: string;
   duration: string;
   lessonsCount: number;
-  rating: number;
-  studentsCount: number;
-  badge: string;
   summary: string;
   modules: CourseModule[];
 }
@@ -24,897 +22,591 @@ export interface Course {
   selector: 'sf-archetype-view',
   template: `
     <div class="platform-shell">
-      <!-- Top Navigation Bar -->
       <header class="top-nav">
         <div class="sf-container nav-inner">
-          <div class="nav-brand">
-            <span class="brand-icon">🌿</span>
-            <div class="brand-info">
-              <span class="brand-name">PlantCare Academy</span>
-              <span class="brand-tagline">Indoor Horticultural Academy</span>
-            </div>
-          </div>
-
-          <div class="nav-search">
-            <input
-              type="search"
-              class="search-bar"
-              placeholder="Search masterclasses, pests, light guides..."
-              [value]="searchQuery()"
-              (input)="onSearchInput($event)"
-            />
-          </div>
-
-          <nav class="nav-links">
-            <a href="#catalog" class="nav-link">Catalog</a>
-            <a href="#lesson-preview" class="nav-link">Lesson Preview</a>
-            <a href="#diagnostics" class="nav-link">Diagnostics</a>
-            <a href="#watering" class="nav-link">Watering</a>
-            <a href="#newsletter" class="sf-btn sf-btn-primary nav-cta">Seasonal Dispatch</a>
+          <a href="#hero" class="nav-brand">PlantCare Academy</a>
+          <nav class="nav-links" aria-label="Primary">
+            <a href="#catalog" class="nav-link">Courses</a>
+            <a href="#lesson-preview" class="nav-link">Studio</a>
+            <a href="#diagnostics" class="nav-link">Labs</a>
+            <a href="#newsletter" class="nav-link">Dispatch</a>
           </nav>
         </div>
       </header>
 
       <main>
-        <!-- Hero Section with Plant Illustration & Search -->
-        <section id="hero" class="hero-section">
-          <div class="sf-container hero-grid">
-            <div class="hero-text">
-              <div class="badge-row">
-                <span class="sf-badge sf-badge-primary">Flagship Archetype: learning_platform</span>
-                <span class="sf-badge sf-badge-accent">warm-organic</span>
-              </div>
-              <h1 class="hero-title">PlantCare Academy</h1>
-              <p class="hero-tagline">Keep Your Indoor Jungle Thriving with Science-Backed Care</p>
-              <p class="hero-desc">Interactive masterclasses, watering diagnostics, lighting calculators, and pest emergency guides taught by botanical experts.</p>
+        <section id="hero" class="hero" aria-labelledby="hero-brand">
+          <div class="hero-plane" aria-hidden="true">
+            <svg class="hero-foliage" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#c5d8ce" />
+                  <stop offset="45%" stop-color="#9bb8a8" />
+                  <stop offset="100%" stop-color="#145c45" />
+                </linearGradient>
+                <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f5f9f6" stop-opacity="0.15" />
+                  <stop offset="55%" stop-color="#0f241c" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#0f241c" stop-opacity="0.72" />
+                </linearGradient>
+              </defs>
+              <rect width="1440" height="900" fill="url(#sky)" />
+              <path
+                d="M0 620 C180 540 260 700 420 640 C560 590 620 480 780 520 C940 560 1020 700 1180 640 C1300 600 1380 540 1440 560 L1440 900 L0 900 Z"
+                fill="#0e4634"
+                opacity="0.55"
+              />
+              <path
+                d="M920 180 C980 90 1120 70 1180 160 C1240 250 1180 340 1080 320 C980 300 860 270 920 180 Z"
+                fill="#2f8f6b"
+              />
+              <path
+                d="M1080 220 C1140 150 1260 160 1290 240 C1320 320 1220 370 1140 340 C1060 310 1020 290 1080 220 Z"
+                fill="#145c45"
+              />
+              <path
+                d="M1040 300 C1060 250 1120 230 1160 270"
+                stroke="#0f241c"
+                stroke-width="8"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <ellipse cx="320" cy="340" rx="140" ry="90" fill="#267a5a" opacity="0.85" />
+              <ellipse cx="420" cy="300" rx="110" ry="70" fill="#145c45" />
+              <path
+                d="M360 420 C370 300 410 220 460 160"
+                stroke="#0e4634"
+                stroke-width="10"
+                fill="none"
+                stroke-linecap="round"
+              />
+              <rect x="1180" y="520" width="18" height="120" rx="2" fill="#1a5f7a" opacity="0.9" />
+              <rect x="1168" y="500" width="42" height="22" rx="2" fill="#f5f9f6" opacity="0.9" />
+              <rect width="1440" height="900" fill="url(#mist)" />
+            </svg>
+          </div>
 
-              <div class="hero-actions">
-                <a href="#catalog" class="sf-btn sf-btn-primary hero-btn">Explore Masterclasses →</a>
-                <a href="#lesson-preview" class="sf-btn sf-btn-secondary hero-btn">Watch Lesson Preview</a>
-              </div>
-
-              <!-- Quick Proof Stats -->
-              <div class="hero-stats">
-                <div class="stat-item">
-                  <div class="stat-number">12,000+</div>
-                  <div class="stat-label">Plants Saved</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-number">98%</div>
-                  <div class="stat-label">Success Rate</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-number">24/7</div>
-                  <div class="stat-label">Diagnostics</div>
-                </div>
-                <div class="stat-item">
-                  <div class="stat-number">4.9★</div>
-                  <div class="stat-label">Student Rating</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="hero-visual">
-              <div class="botanical-art-card">
-                <svg class="plant-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Pot -->
-                  <path d="M100 220 L120 290 Q160 300 200 290 L220 220 Z" fill="#C86D51" stroke="#A7533B" stroke-width="3" />
-                  <ellipse cx="160" cy="220" rx="60" ry="12" fill="#E28E73" stroke="#A7533B" stroke-width="2" />
-                  <!-- Soil -->
-                  <ellipse cx="160" cy="220" rx="55" ry="9" fill="#4A3525" />
-                  <!-- Main Stems -->
-                  <path d="M160 215 Q150 160 120 120" stroke="#2D5A27" stroke-width="6" stroke-linecap="round" fill="none" />
-                  <path d="M160 215 Q165 140 200 90" stroke="#2D5A27" stroke-width="6" stroke-linecap="round" fill="none" />
-                  <path d="M160 215 Q170 170 160 60" stroke="#2D5A27" stroke-width="5" stroke-linecap="round" fill="none" />
-                  <!-- Monstera Left Leaf with Fenestrations -->
-                  <path d="M120 120 C90 100 60 110 50 140 C40 170 70 200 110 180 C130 170 135 140 120 120 Z" fill="#2D5A27" />
-                  <ellipse cx="85" cy="140" rx="4" ry="12" transform="rotate(-25 85 140)" fill="#FDFBF7" />
-                  <ellipse cx="95" cy="165" rx="3" ry="10" transform="rotate(-15 95 165)" fill="#FDFBF7" />
-                  <!-- Monstera Right Leaf with Fenestrations -->
-                  <path d="M200 90 C230 70 265 80 275 110 C285 140 255 170 215 150 C195 140 190 110 200 90 Z" fill="#43783D" />
-                  <ellipse cx="235" cy="110" rx="4" ry="12" transform="rotate(25 235 110)" fill="#FDFBF7" />
-                  <ellipse cx="225" cy="135" rx="3" ry="10" transform="rotate(15 225 135)" fill="#FDFBF7" />
-                  <!-- Top Center Emerging Leaf -->
-                  <path d="M160 60 C150 30 170 20 180 35 C190 50 180 80 160 60 Z" fill="#8FBC8F" />
-                </svg>
-                <div class="art-caption">
-                  <strong>Botanical Specimen:</strong>
-                  <span>Monstera Deliciosa (Aroid Family)</span>
-                </div>
-              </div>
+          <div class="sf-container hero-copy">
+            <p id="hero-brand" class="hero-brand">PlantCare Academy</p>
+            <h1 class="hero-headline">Field lab for indoor growers</h1>
+            <p class="hero-support">
+              Masterclasses, light diagnostics, and watering protocols built like a greenhouse bench —
+              cool, precise, botanical.
+            </p>
+            <div class="hero-actions">
+              <a href="#catalog" class="sf-btn sf-btn-primary">Browse masterclasses</a>
+              <a href="#lesson-preview" class="sf-btn sf-btn-secondary">Open studio</a>
             </div>
           </div>
         </section>
 
-        <!-- Course Catalog Main Section with Filter Chips & Cards -->
-        <section id="catalog" class="catalog-section sf-container">
-          <div class="section-heading">
-            <span class="sf-badge sf-badge-primary">Interactive Curriculum</span>
-            <h2 class="section-title">Horticultural Masterclasses & Field Guides</h2>
-            <p class="section-subtitle">
-              Browse science-backed courses taught by certified botanists and plant pathologists.
-            </p>
-          </div>
+        <section id="catalog" class="section catalog" aria-labelledby="catalog-title">
+          <div class="sf-container">
+            <header class="section-head">
+              <h2 id="catalog-title">Masterclass catalog</h2>
+              <p>Select a course to open it in the studio.</p>
+            </header>
 
-          <!-- Category Filter Chips -->
-          <div class="filter-group">
-            <div class="filter-label">Category Filter:</div>
-            <div class="filter-chips">
-              @for (cat of categories; track cat) {
-                <button
-                  type="button"
-                  class="chip"
-                  [class.chip-active]="selectedCategory() === cat"
-                  (click)="setCategory(cat)"
+            <div class="filters" role="search">
+              <label class="filter-field">
+                <span class="filter-label">Search</span>
+                <input
+                  type="search"
+                  class="filter-input"
+                  placeholder="Title, instructor, topic"
+                  [value]="searchQuery()"
+                  (input)="onSearchInput($event)"
+                />
+              </label>
+              <label class="filter-field">
+                <span class="filter-label">Category</span>
+                <select
+                  class="filter-input"
+                  [value]="selectedCategory()"
+                  (change)="onCategoryChange($event)"
                 >
-                  {{ cat }}
-                  @if (cat === 'All Categories') {
-                    <span class="chip-count">({{ courses().length }})</span>
+                  @for (cat of categories; track cat) {
+                    <option [value]="cat">{{ cat }}</option>
                   }
-                </button>
-              }
+                </select>
+              </label>
+              <label class="filter-field">
+                <span class="filter-label">Level</span>
+                <select class="filter-input" [value]="selectedLevel()" (change)="onLevelChange($event)">
+                  @for (lvl of levels; track lvl) {
+                    <option [value]="lvl">{{ lvl }}</option>
+                  }
+                </select>
+              </label>
             </div>
-          </div>
 
-          <!-- Difficulty Level Filter Chips -->
-          <div class="filter-group level-group">
-            <div class="filter-label">Skill Level:</div>
-            <div class="filter-chips">
-              @for (lvl of levels; track lvl) {
-                <button
-                  type="button"
-                  class="chip chip-sm"
-                  [class.chip-active]="selectedLevel() === lvl"
-                  (click)="setLevel(lvl)"
+            <div class="catalog-grid">
+              @for (course of filteredCourses(); track course.id) {
+                <article
+                  class="course-card"
+                  [class.course-card-active]="activeCourseId() === course.id"
                 >
-                  {{ lvl }}
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Courses Grid -->
-          <div class="catalog-grid">
-            @for (course of filteredCourses(); track course.id) {
-              <article class="course-card" [class.course-card-active]="activeCourseId() === course.id">
-                <div class="card-header">
-                  <span class="sf-badge sf-badge-accent">{{ course.badge }}</span>
-                  <div class="card-rating">★ {{ course.rating }} ({{ course.studentsCount }})</div>
-                </div>
-
-                <div class="card-meta-row">
-                  <span class="level-tag">{{ course.level }}</span>
-                  <span class="duration-tag">{{ course.duration }} • {{ course.lessonsCount }} lessons</span>
-                </div>
-
-                <h3 class="course-title">{{ course.title }}</h3>
-                <p class="course-instructor">Instructor: {{ course.instructor }}</p>
-                <p class="course-summary">{{ course.summary }}</p>
-
-                <!-- Curriculum Snapshot -->
-                <div class="curriculum-snapshot">
-                  <div class="curriculum-title">Curriculum Modules:</div>
-                  <ul class="curriculum-list">
-                    @for (module of course.modules; track module.title) {
-                      <li class="curriculum-item">
-                        <span>✓ {{ module.title }}</span>
-                        <span class="item-duration">{{ module.duration }}</span>
-                      </li>
-                    }
-                  </ul>
-                </div>
-
-                <div class="card-actions">
+                  <div class="course-meta">
+                    <span>{{ course.level }}</span>
+                    <span>{{ course.duration }} · {{ course.lessonsCount }} lessons</span>
+                  </div>
+                  <h3 class="course-title">{{ course.title }}</h3>
+                  <p class="course-instructor">{{ course.instructor }}</p>
+                  <p class="course-summary">{{ course.summary }}</p>
                   <button
                     type="button"
-                    class="sf-btn sf-btn-primary preview-btn"
+                    class="sf-btn sf-btn-primary course-cta"
                     (click)="selectCourse(course.id)"
                   >
-                    Preview Lesson & Video →
+                    Preview in studio
+                  </button>
+                </article>
+              } @empty {
+                <div class="empty-state">
+                  <p>No masterclasses match these filters.</p>
+                  <button type="button" class="sf-btn sf-btn-secondary" (click)="resetFilters()">
+                    Reset filters
                   </button>
                 </div>
-              </article>
-            } @empty {
-              <div class="empty-state">
-                <p>No masterclasses match your current search or category filter.</p>
-                <button type="button" class="sf-btn sf-btn-secondary" (click)="resetFilters()">
-                  Reset All Filters
-                </button>
-              </div>
-            }
+              }
+            </div>
           </div>
         </section>
 
-        <!-- Interactive Lesson Detail Preview Section (Video Player Stub & Guides) -->
-        <section id="lesson-preview" class="lesson-preview-section sf-container">
-          <div class="section-heading">
-            <span class="sf-badge sf-badge-primary">Hands-On Studio</span>
-            <h2 class="section-title">Interactive Lesson Detail Preview</h2>
-            <p class="section-subtitle">
-              Experience the masterclass player: video playback controls and step-by-step horticultural checklist.
-            </p>
-          </div>
+        <section id="lesson-preview" class="section studio" aria-labelledby="studio-title">
+          <div class="sf-container">
+            <header class="section-head">
+              <h2 id="studio-title">Lesson studio</h2>
+              <p>Playback and horticultural checklist for the selected masterclass.</p>
+            </header>
 
-          <div class="preview-layout">
-            <!-- Left: Video Player Stub -->
-            <div class="video-player-container">
-              <div class="player-screen">
-                <div class="video-artwork">
-                  <div class="artwork-icon">🪴</div>
-                  <div class="video-active-title">{{ activeCourse().title }}</div>
-                  <div class="video-active-instructor">Lecture with {{ activeCourse().instructor }}</div>
-                </div>
-
-                <!-- Overlay Controls -->
-                <div class="player-overlay">
-                  <button type="button" class="play-btn" (click)="togglePlay()">
-                    @if (isPlaying()) {
-                      <span>⏸</span>
-                    } @else {
-                      <span>▶</span>
-                    }
+            <div class="studio-layout">
+              <div class="player">
+                <div class="player-screen">
+                  <p class="player-kicker">Now studying</p>
+                  <h3 class="player-title">{{ activeCourse().title }}</h3>
+                  <p class="player-instructor">{{ activeCourse().instructor }}</p>
+                  <button type="button" class="play-btn" (click)="togglePlay()" [attr.aria-pressed]="isPlaying()">
+                    {{ isPlaying() ? 'Pause' : 'Play' }}
                   </button>
                 </div>
+                <div class="player-bar">
+                  <span class="time">{{ formattedPlaybackTime() }} / 22:00</span>
+                  <input
+                    type="range"
+                    class="scrubber"
+                    min="0"
+                    max="1320"
+                    [value]="playbackSeconds()"
+                    (input)="onScrub($event)"
+                    aria-label="Lesson scrubber"
+                  />
+                  <button type="button" class="text-btn" (click)="toggleMute()">
+                    {{ isMuted() ? 'Unmute' : 'Mute' }}
+                  </button>
+                  <button type="button" class="text-btn" (click)="cycleSpeed()">
+                    {{ playbackSpeed() }}
+                  </button>
+                </div>
+                <p class="module-line">
+                  Module: {{ activeCourse().modules[0].title }}
+                  ({{ activeCourse().modules[0].duration }})
+                </p>
+              </div>
 
-                <!-- Stream Status Badge -->
-                <div class="stream-badge">
-                  @if (isPlaying()) {
-                    <span class="badge-live">● Live Stream (1080p Botanical Feed)</span>
-                  } @else {
-                    <span class="badge-paused">⏸ Paused at {{ formattedPlaybackTime() }}</span>
+              <div class="guide">
+                <div class="guide-head">
+                  <h3>Care checklist</h3>
+                  <span>{{ guideProgressPercent() }}% complete</span>
+                </div>
+                <ul class="steps">
+                  @for (step of careSteps; track step.number) {
+                    <li>
+                      <button
+                        type="button"
+                        class="step"
+                        [class.step-done]="isStepCompleted(step.number)"
+                        (click)="toggleStep(step.number)"
+                      >
+                        <span class="step-index" aria-hidden="true">
+                          {{ isStepCompleted(step.number) ? '✓' : step.number }}
+                        </span>
+                        <span class="step-body">
+                          <strong>{{ step.title }}</strong>
+                          <span>{{ step.instruction }}</span>
+                        </span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="diagnostics" class="section labs" aria-labelledby="labs-title">
+          <div class="sf-container">
+            <header class="section-head">
+              <h2 id="labs-title">Light and watering labs</h2>
+              <p>Dial orientation and substrate to get a working care interval.</p>
+            </header>
+
+            <div class="labs-grid">
+              <div class="lab-panel">
+                <h3>Foot-candle estimate</h3>
+                <p class="lab-help">Choose window exposure</p>
+                <div class="option-row" role="group" aria-label="Window orientation">
+                  @for (orient of orientations; track orient.key) {
+                    <button
+                      type="button"
+                      class="option"
+                      [class.option-active]="selectedOrientation() === orient.key"
+                      (click)="selectedOrientation.set(orient.key)"
+                    >
+                      {{ orient.label }}
+                    </button>
                   }
                 </div>
-              </div>
-
-              <!-- Video Scrubber & Bar -->
-              <div class="player-controls-bar">
-                <div class="time-display">{{ formattedPlaybackTime() }} / 22:00</div>
-                <input
-                  type="range"
-                  class="scrubber-range"
-                  min="0"
-                  max="1320"
-                  [value]="playbackSeconds()"
-                  (input)="onScrub($event)"
-                />
-                <div class="control-actions">
-                  <button type="button" class="ctrl-btn" (click)="toggleMute()">
-                    {{ isMuted() ? '🔇 Unmute' : '🔊 Mute' }}
-                  </button>
-                  <button type="button" class="ctrl-btn" (click)="cycleSpeed()">
-                    Speed: {{ playbackSpeed() }}
-                  </button>
+                <div class="lab-result">
+                  <p class="result-value">{{ currentLightData().footCandles }} FC</p>
+                  <p class="result-note">{{ currentLightData().recommendation }}</p>
                 </div>
               </div>
 
-              <div class="active-module-bar">
-                <strong>Current Module:</strong>
-                <span>{{ activeCourse().modules[0].title }} ({{ activeCourse().modules[0].duration }})</span>
-              </div>
-            </div>
-
-            <!-- Right: Step-by-Step Practical Care Guide -->
-            <div class="guide-container">
-              <div class="guide-header">
-                <h3 class="guide-title">Step-by-Step Horticultural Guide</h3>
-                <div class="guide-progress">
-                  <span>Progress: {{ guideProgressPercent() }}%</span>
-                  <div class="progress-track">
-                    <div class="progress-fill" [style.width.%]="guideProgressPercent()"></div>
-                  </div>
+              <div id="watering" class="lab-panel">
+                <h3>Watering interval</h3>
+                <p class="lab-help">Substrate</p>
+                <div class="option-row" role="group" aria-label="Substrate">
+                  @for (sub of substrates; track sub.key) {
+                    <button
+                      type="button"
+                      class="option"
+                      [class.option-active]="selectedSubstrate() === sub.key"
+                      (click)="selectedSubstrate.set(sub.key)"
+                    >
+                      {{ sub.label }}
+                    </button>
+                  }
                 </div>
-              </div>
-
-              <div class="steps-list">
-                @for (step of careSteps; track step.number) {
-                  <div
-                    class="step-card"
-                    [class.step-completed]="isStepCompleted(step.number)"
-                    (click)="toggleStep(step.number)"
-                  >
-                    <div class="step-checkbox">
-                      @if (isStepCompleted(step.number)) {
-                        <span>✓</span>
-                      } @else {
-                        <span>{{ step.number }}</span>
-                      }
-                    </div>
-                    <div class="step-content">
-                      <h4 class="step-heading">Step {{ step.number }}: {{ step.title }}</h4>
-                      <p class="step-desc">{{ step.instruction }}</p>
-                      <span class="step-hint">Click to mark as complete</span>
-                    </div>
-                  </div>
-                }
-              </div>
-
-              <div class="pro-tip-box">
-                <span class="tip-icon">💡</span>
-                <div class="tip-text">
-                  <strong>Botanist Pro-Tip:</strong>
-                  Never compact chunky aroid soil down with your fists; gently tap the pot against your workbench to settle substrate while preserving root oxygen channels.
+                <p class="lab-help">Pot material</p>
+                <div class="option-row" role="group" aria-label="Pot material">
+                  @for (pot of pots; track pot.key) {
+                    <button
+                      type="button"
+                      class="option"
+                      [class.option-active]="selectedPot() === pot.key"
+                      (click)="selectedPot.set(pot.key)"
+                    >
+                      {{ pot.label }}
+                    </button>
+                  }
+                </div>
+                <div class="lab-result">
+                  <p class="result-value">{{ currentWateringAdvice().frequency }}</p>
+                  <p class="result-note">{{ currentWateringAdvice().note }}</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Light & Watering Diagnostics Section -->
-        <section id="diagnostics" class="diagnostics-section sf-container">
-          <div class="section-heading">
-            <span class="sf-badge sf-badge-primary">Botanical Care Tools</span>
-            <h2 class="section-title">Indoor Diagnostics & Calculators</h2>
-            <p class="section-subtitle">
-              Science-backed formulas to ensure accurate lighting and moisture levels in your living space.
-            </p>
-          </div>
+        <section id="newsletter" class="section dispatch" aria-labelledby="dispatch-title">
+          <div class="sf-container dispatch-inner">
+            <header class="section-head section-head-left">
+              <h2 id="dispatch-title">Seasonal dispatch</h2>
+              <p>One care briefing per season. Pick a season, then subscribe.</p>
+            </header>
 
-          <div class="diagnostics-grid">
-            <!-- Light Calculator -->
-            <div class="calc-card">
-              <h3 class="calc-title">☀️ Foot-Candles & Light Calculator</h3>
-              <p class="calc-desc">Select your primary window exposure to calculate foot-candle lux saturation:</p>
-
-              <div class="option-buttons">
-                @for (orient of orientations; track orient.key) {
-                  <button
-                    type="button"
-                    class="sf-btn"
-                    [class.sf-btn-primary]="selectedOrientation() === orient.key"
-                    [class.sf-btn-secondary]="selectedOrientation() !== orient.key"
-                    (click)="selectedOrientation.set(orient.key)"
-                  >
-                    {{ orient.label }}
-                  </button>
-                }
-              </div>
-
-              <div class="calc-result">
-                <div class="result-number">{{ currentLightData().footCandles }} FC</div>
-                <div class="result-label">Available Foot-Candles Intensity</div>
-                <div class="result-advice">
-                  <strong>Compatible Species:</strong> {{ currentLightData().recommendation }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Watering Schedule Matrix -->
-            <div id="watering" class="calc-card">
-              <h3 class="calc-title">💧 Watering & Substrate Dynamic Matrix</h3>
-              <p class="calc-desc">Select substrate porosity and container type to compute hydration interval:</p>
-
-              <div class="matrix-selector">
-                <div class="selector-label">Substrate:</div>
-                <div class="option-buttons">
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedSubstrate() === 'aroid'"
-                    [class.sf-btn-secondary]="selectedSubstrate() !== 'aroid'"
-                    (click)="selectedSubstrate.set('aroid')"
-                  >
-                    Chunky Aroid Mix
-                  </button>
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedSubstrate() === 'peat'"
-                    [class.sf-btn-secondary]="selectedSubstrate() !== 'peat'"
-                    (click)="selectedSubstrate.set('peat')"
-                  >
-                    Peat/Perlite Blend
-                  </button>
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedSubstrate() === 'succulent'"
-                    [class.sf-btn-secondary]="selectedSubstrate() !== 'succulent'"
-                    (click)="selectedSubstrate.set('succulent')"
-                  >
-                    Gritty Succulent Mix
-                  </button>
-                </div>
-              </div>
-
-              <div class="matrix-selector">
-                <div class="selector-label">Pot Material:</div>
-                <div class="option-buttons">
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedPot() === 'terracotta'"
-                    [class.sf-btn-secondary]="selectedPot() !== 'terracotta'"
-                    (click)="selectedPot.set('terracotta')"
-                  >
-                    Terracotta (Porous)
-                  </button>
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedPot() === 'ceramic'"
-                    [class.sf-btn-secondary]="selectedPot() !== 'ceramic'"
-                    (click)="selectedPot.set('ceramic')"
-                  >
-                    Glazed Ceramic
-                  </button>
-                  <button
-                    type="button"
-                    class="sf-btn sf-btn-sm"
-                    [class.sf-btn-primary]="selectedPot() === 'plastic'"
-                    [class.sf-btn-secondary]="selectedPot() !== 'plastic'"
-                    (click)="selectedPot.set('plastic')"
-                  >
-                    Nursery Plastic
-                  </button>
-                </div>
-              </div>
-
-              <div class="calc-result">
-                <div class="result-number">{{ currentWateringAdvice().frequency }}</div>
-                <div class="result-label">Recommended Watering Frequency</div>
-                <div class="result-advice">
-                  <strong>Pathology Note:</strong> {{ currentWateringAdvice().note }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Seasonal Tips Newsletter Subscription -->
-        <section id="newsletter" class="newsletter-section sf-container">
-          <div class="newsletter-card">
-            <div class="newsletter-header">
-              <span class="sf-badge sf-badge-primary">Curated Botanist Dispatch</span>
-              <h2 class="newsletter-title">Seasonal Plant Care Alerts</h2>
-              <p class="newsletter-subtitle">
-                Select your season to preview climate care adjustments and subscribe to weekly horticultural briefings.
-              </p>
-            </div>
-
-            <!-- Season Selector Tabs -->
-            <div class="season-tabs">
+            <div class="season-row" role="tablist" aria-label="Season">
               @for (season of seasons; track season.key) {
                 <button
                   type="button"
-                  class="season-tab"
-                  [class.season-tab-active]="selectedSeason() === season.key"
+                  role="tab"
+                  class="season"
+                  [class.season-active]="selectedSeason() === season.key"
+                  [attr.aria-selected]="selectedSeason() === season.key"
                   (click)="selectedSeason.set(season.key)"
                 >
-                  <span class="season-icon">{{ season.icon }}</span>
-                  <span class="season-name">{{ season.name }}</span>
+                  {{ season.name }}
                 </button>
               }
             </div>
 
-            <!-- Seasonal Tip Content -->
-            <div class="season-preview-box">
-              <div class="season-focus">
-                <strong>Focus for {{ currentSeasonTip().name }}:</strong>
-                {{ currentSeasonTip().focus }}
-              </div>
-              <p class="season-detail">{{ currentSeasonTip().detail }}</p>
+            <div class="season-copy">
+              <p class="season-focus">{{ currentSeasonTip().focus }}</p>
+              <p>{{ currentSeasonTip().detail }}</p>
             </div>
 
-            <!-- Subscription Form -->
-            <div class="subscription-form-wrapper">
-              @if (isSubscribed()) {
-                <div class="sub-success-message">
-                  ✓ Success! You are subscribed with <strong>{{ newsletterEmail() }}</strong>. Look out for the {{ currentSeasonTip().name }} botanical guide in your inbox.
-                </div>
-              } @else {
-                <form class="sub-form" (submit)="onSubscribe($event)">
-                  <input
-                    type="email"
-                    class="sub-input"
-                    placeholder="Enter your email (e.g. botanist@indoorjungle.com)"
-                    [value]="newsletterEmail()"
-                    (input)="onEmailInput($event)"
-                    required
-                  />
-                  <button type="submit" class="sf-btn sf-btn-primary sub-btn">
-                    Subscribe to {{ currentSeasonTip().name }} Tips →
-                  </button>
-                </form>
-              }
-            </div>
-          </div>
-        </section>
-
-        <!-- Botanist Community Reviews -->
-        <section class="testimonials-section sf-container">
-          <div class="section-heading">
-            <h2 class="section-title">Verified Student Outcomes</h2>
-            <p class="section-subtitle">Real experiences from indoor gardeners and botanical enthusiasts.</p>
-          </div>
-
-          <div class="testimonials-grid">
-            @for (item of testimonials; track item.author) {
-              <div class="testimonial-card">
-                <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-quote">"{{ item.quote }}"</p>
-                <div class="testimonial-author">
-                  <strong>{{ item.author }}</strong>
-                  <span>{{ item.role }}</span>
-                </div>
-              </div>
+            @if (isSubscribed()) {
+              <p class="sub-success" role="status">
+                Subscribed as {{ newsletterEmail() }} for {{ currentSeasonTip().name }} briefings.
+              </p>
+            } @else {
+              <form class="sub-form" (submit)="onSubscribe($event)">
+                <label class="sr-only" for="dispatch-email">Email</label>
+                <input
+                  id="dispatch-email"
+                  type="email"
+                  class="filter-input sub-input"
+                  placeholder="you@greenhouse.lab"
+                  [value]="newsletterEmail()"
+                  (input)="onEmailInput($event)"
+                  required
+                />
+                <button type="submit" class="sf-btn sf-btn-primary">
+                  Subscribe to {{ currentSeasonTip().name }}
+                </button>
+              </form>
             }
           </div>
         </section>
       </main>
 
-      <!-- Footer -->
-      <footer class="footer-root">
-        <div class="sf-container footer-content">
-          <div class="footer-top">
-            <div class="footer-brand">
-              <span class="brand-logo">🌿</span>
-              <span class="brand-name">PlantCare Academy</span>
-            </div>
-            <p class="footer-desc">Interactive masterclasses, watering diagnostics, lighting calculators, and pest emergency guides taught by botanical experts.</p>
-          </div>
-          <div class="footer-bottom">
-            <span>© 2026 PlantCare Academy. Built with SiteForge Autonomous Web Factory.</span>
-            <span>100% Angular 19+ Standalone • Signals Reactivity • Zoneless Change Detection</span>
-          </div>
+      <footer class="footer">
+        <div class="sf-container footer-inner">
+          <p class="footer-brand">PlantCare Academy</p>
+          <p class="footer-meta">
+            Greenhouse Lab preset · SiteForge learning_platform reference · © 2026
+          </p>
         </div>
       </footer>
     </div>
   `,
-  styles: [`
+  styles: `
     .platform-shell {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background-color: var(--color-bg);
+      background: var(--color-bg);
       color: var(--color-text-main);
-      font-family: var(--font-body);
     }
 
-    /* Top Navigation */
     .top-nav {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background-color: var(--color-surface);
+      z-index: 40;
+      background: color-mix(in srgb, var(--color-surface) 92%, transparent);
       border-bottom: var(--border-width) solid var(--color-border);
-      backdrop-filter: blur(var(--backdrop-blur));
+      backdrop-filter: blur(10px);
     }
 
     .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      min-height: 4rem;
       gap: var(--spacing-4);
-      height: 72px;
     }
 
     .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-
-    .brand-icon {
-      font-size: var(--text-2xl);
-    }
-
-    .brand-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand-name {
       font-family: var(--font-heading);
       font-size: var(--text-lg);
       font-weight: 700;
+      text-decoration: none;
+      letter-spacing: -0.02em;
       color: var(--color-primary);
-    }
-
-    .brand-tagline {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-    }
-
-    .nav-search {
-      flex: 1;
-      max-width: 360px;
-    }
-
-    .search-bar {
-      width: 100%;
-      padding: var(--spacing-2) var(--spacing-4);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-pill);
-      background-color: var(--color-surface-muted);
-      color: var(--color-text-main);
-      font-size: var(--text-sm);
-      outline: none;
-    }
-
-    .search-bar:focus {
-      border-color: var(--color-primary);
     }
 
     .nav-links {
       display: flex;
-      align-items: center;
-      gap: var(--spacing-4);
+      gap: var(--spacing-5);
+      flex-wrap: wrap;
     }
 
     .nav-link {
       font-size: var(--text-sm);
       font-weight: 600;
-      color: var(--color-text-main);
       text-decoration: none;
+      color: var(--color-text-muted);
       transition: color var(--transition-fast);
     }
 
-    .nav-link:hover {
+    .nav-link:hover,
+    .nav-link:focus-visible {
       color: var(--color-primary);
     }
 
-    .nav-cta {
-      padding: var(--spacing-2) var(--spacing-4);
-      text-decoration: none;
-    }
-
-    /* Hero Section */
-    .hero-section {
-      padding: var(--spacing-16) 0 var(--spacing-12);
-      background: linear-gradient(180deg, var(--color-surface-muted) 0%, var(--color-bg) 100%);
-      border-bottom: var(--border-width) solid var(--color-border);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--spacing-12);
-      align-items: center;
-    }
-
-    .hero-text {
+    .hero {
+      position: relative;
+      min-height: 100svh;
       display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
+      align-items: flex-end;
+      overflow: hidden;
+      color: #f5f9f6;
     }
 
-    .badge-row {
-      display: flex;
-      gap: var(--spacing-2);
-      flex-wrap: wrap;
+    .hero-plane {
+      position: absolute;
+      inset: 0;
     }
 
-    .hero-title {
-      font-size: var(--text-4xl);
+    .hero-foliage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: foliage-drift 18s ease-in-out infinite alternate;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--spacing-16);
+      padding-bottom: clamp(3rem, 8vw, 5.5rem);
+      max-width: 42rem;
+      margin-right: auto;
+      animation: rise-in 700ms ease-out both;
+    }
+
+    .hero-brand {
+      font-family: var(--font-heading);
+      font-size: clamp(2.75rem, 7vw, 4.75rem);
       font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--color-primary);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin-bottom: var(--spacing-5);
     }
 
-    .hero-tagline {
-      font-size: var(--text-xl);
-      font-weight: 700;
-      color: var(--color-text-main);
+    .hero-headline {
+      font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+      font-weight: 600;
+      margin-bottom: var(--spacing-3);
+      color: #e7eeea;
     }
 
-    .hero-desc {
+    .hero-support {
       font-size: var(--text-base);
-      color: var(--color-text-muted);
       line-height: var(--line-height-relaxed);
-      max-width: 600px;
+      color: color-mix(in srgb, #f5f9f6 82%, transparent);
+      margin-bottom: var(--spacing-8);
+      max-width: 34rem;
     }
 
     .hero-actions {
       display: flex;
-      gap: var(--spacing-4);
-      margin-top: var(--spacing-2);
       flex-wrap: wrap;
+      gap: var(--spacing-3);
     }
 
-    .hero-btn {
-      text-decoration: none;
+    .hero .sf-btn-secondary {
+      color: #f5f9f6;
+      border-color: color-mix(in srgb, #f5f9f6 45%, transparent);
     }
 
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--spacing-4);
-      margin-top: var(--spacing-6);
-      padding-top: var(--spacing-6);
-      border-top: var(--border-width) solid var(--color-border);
+    .hero .sf-btn-secondary:hover {
+      border-color: #f5f9f6;
+      color: #f5f9f6;
     }
 
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stat-number {
-      font-family: var(--font-heading);
-      font-size: var(--text-2xl);
-      font-weight: 800;
-      color: var(--color-primary);
-    }
-
-    .stat-label {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .hero-visual {
-      display: flex;
-      justify-content: center;
-    }
-
-    .botanical-art-card {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-6);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 340px;
-      width: 100%;
-    }
-
-    .plant-svg {
-      width: 100%;
-      height: 240px;
-    }
-
-    .art-caption {
-      margin-top: var(--spacing-3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-    }
-
-    /* Section Headings */
-    .section-heading {
-      text-align: center;
-      margin-bottom: var(--spacing-8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-
-    .section-title {
-      font-size: var(--text-3xl);
-      font-weight: 800;
-    }
-
-    .section-subtitle {
-      font-size: var(--text-base);
-      color: var(--color-text-muted);
-      max-width: 640px;
-    }
-
-    /* Catalog & Filter Chips */
-    .catalog-section {
+    .section {
       padding: var(--spacing-16) 0;
     }
 
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-      margin-bottom: var(--spacing-4);
-      flex-wrap: wrap;
+    .section-head {
+      text-align: center;
+      max-width: 40rem;
+      margin: 0 auto var(--spacing-10);
+      display: grid;
+      gap: var(--spacing-2);
+    }
+
+    .section-head-left {
+      text-align: left;
+      margin-left: 0;
+    }
+
+    .section-head h2 {
+      font-size: var(--text-3xl);
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      color: var(--color-text-muted);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: var(--spacing-4);
+      margin-bottom: var(--spacing-8);
+    }
+
+    .filter-field {
+      display: grid;
+      gap: var(--spacing-2);
     }
 
     .filter-label {
       font-size: var(--text-xs);
       font-weight: 700;
-      color: var(--color-text-muted);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: var(--color-text-muted);
     }
 
-    .filter-chips {
-      display: flex;
-      gap: var(--spacing-2);
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      padding: var(--spacing-2) var(--spacing-4);
-      background-color: var(--color-surface);
+    .filter-input {
+      width: 100%;
+      padding: var(--spacing-3) var(--spacing-4);
       border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-pill);
-      font-size: var(--text-xs);
-      font-weight: 600;
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
       color: var(--color-text-main);
-      cursor: pointer;
-      transition: all var(--transition-fast);
+      font: inherit;
+      font-size: var(--text-sm);
     }
 
-    .chip:hover {
-      border-color: var(--color-primary);
-    }
-
-    .chip-active {
-      background-color: var(--color-primary);
-      color: #FFFFFF;
-      border-color: var(--color-primary);
-    }
-
-    .chip-sm {
-      padding: var(--spacing-1) var(--spacing-3);
-    }
-
-    .chip-count {
-      opacity: 0.8;
-      margin-left: var(--spacing-1);
+    .filter-input:focus {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 1px;
     }
 
     .catalog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: var(--spacing-8);
-      margin-top: var(--spacing-8);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-6);
     }
 
     .course-card {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-6);
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-4);
-      transition: transform var(--transition-fast), border-color var(--transition-fast);
+      gap: var(--spacing-3);
+      padding: var(--spacing-6);
+      background: var(--color-surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-ambient);
+      transition:
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
     }
 
     .course-card:hover {
+      border-color: var(--color-secondary);
       transform: translateY(-2px);
-      border-color: var(--color-primary);
     }
 
     .course-card-active {
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 2px var(--color-primary);
+      box-shadow: var(--shadow-card);
     }
 
-    .card-header {
+    .course-meta {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-    }
-
-    .card-rating {
-      font-size: var(--text-xs);
-      font-weight: 700;
-      color: var(--color-primary);
-    }
-
-    .card-meta-row {
-      display: flex;
-      justify-content: space-between;
+      gap: var(--spacing-3);
+      font-family: var(--font-mono);
       font-size: var(--text-xs);
       color: var(--color-text-muted);
     }
 
-    .level-tag {
-      font-weight: 600;
-    }
-
     .course-title {
       font-size: var(--text-xl);
-      font-weight: 800;
-      color: var(--color-text-main);
+      letter-spacing: -0.02em;
     }
 
     .course-instructor {
-      font-size: var(--text-xs);
-      color: var(--color-primary);
+      font-size: var(--text-sm);
+      color: var(--color-accent);
       font-weight: 600;
     }
 
@@ -922,39 +614,11 @@ export interface Course {
       font-size: var(--text-sm);
       color: var(--color-text-muted);
       line-height: var(--line-height-relaxed);
+      flex: 1;
     }
 
-    .curriculum-snapshot {
-      background-color: var(--color-surface-muted);
-      border-radius: var(--radius-sm);
-      padding: var(--spacing-3);
-      font-size: var(--text-xs);
-    }
-
-    .curriculum-title {
-      font-weight: 700;
-      margin-bottom: var(--spacing-2);
-      color: var(--color-text-main);
-    }
-
-    .curriculum-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
-    }
-
-    .curriculum-item {
-      display: flex;
-      justify-content: space-between;
-      color: var(--color-text-muted);
-    }
-
-    .item-duration {
-      font-weight: 600;
-    }
-
-    .preview-btn {
+    .course-cta {
+      margin-top: var(--spacing-2);
       width: 100%;
     }
 
@@ -962,662 +626,409 @@ export interface Course {
       grid-column: 1 / -1;
       text-align: center;
       padding: var(--spacing-12);
-      background-color: var(--color-surface);
       border: var(--border-width) dashed var(--color-border);
       border-radius: var(--radius-card);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-4);
-    }
-
-    /* Lesson Preview Studio */
-    .lesson-preview-section {
-      padding: var(--spacing-16) 0;
-      border-top: var(--border-width) solid var(--color-border);
-    }
-
-    .preview-layout {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      gap: var(--spacing-4);
+      justify-items: center;
+      color: var(--color-text-muted);
+    }
+
+    .studio {
+      background: linear-gradient(180deg, var(--color-bg), var(--color-surface-muted));
+      border-top: var(--border-width) solid var(--color-border);
+      border-bottom: var(--border-width) solid var(--color-border);
+    }
+
+    .studio-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: var(--spacing-8);
       align-items: start;
     }
 
-    .video-player-container {
-      background-color: var(--color-surface);
+    .player,
+    .guide,
+    .lab-panel {
+      background: var(--color-surface);
       border: var(--border-width) solid var(--color-border);
       border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
 
     .player-screen {
-      position: relative;
-      height: 320px;
-      background: linear-gradient(135deg, #1C2B1A 0%, #0F1A0E 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #FFFFFF;
-      overflow: hidden;
+      min-height: 280px;
+      padding: var(--spacing-8);
+      display: grid;
+      align-content: center;
+      gap: var(--spacing-3);
+      background:
+        radial-gradient(circle at 80% 20%, rgba(47, 143, 107, 0.35), transparent 40%),
+        linear-gradient(145deg, #0f241c, #145c45 55%, #1a5f7a);
+      color: #f5f9f6;
     }
 
-    .video-artwork {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: var(--spacing-2);
-      padding: var(--spacing-4);
-    }
-
-    .artwork-icon {
-      font-size: 3.5rem;
-    }
-
-    .video-active-title {
-      font-family: var(--font-heading);
-      font-size: var(--text-lg);
-      font-weight: 700;
-      max-width: 380px;
-    }
-
-    .video-active-instructor {
+    .player-kicker {
+      font-family: var(--font-mono);
       font-size: var(--text-xs);
-      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.8;
     }
 
-    .player-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(0, 0, 0, 0.2);
+    .player-title {
+      font-size: var(--text-2xl);
+      max-width: 28rem;
+    }
+
+    .player-instructor {
+      font-size: var(--text-sm);
+      opacity: 0.85;
+      margin-bottom: var(--spacing-4);
     }
 
     .play-btn {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background-color: var(--color-primary);
-      color: #FFFFFF;
+      width: fit-content;
+      padding: var(--spacing-3) var(--spacing-6);
       border: none;
-      font-size: var(--text-2xl);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-      transition: transform var(--transition-fast);
-    }
-
-    .play-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .stream-badge {
-      position: absolute;
-      top: var(--spacing-3);
-      left: var(--spacing-3);
-      font-size: var(--text-xs);
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: var(--spacing-1) var(--spacing-3);
-      border-radius: var(--radius-pill);
-    }
-
-    .badge-live {
-      color: #8FBC8F;
-      font-weight: 700;
-    }
-
-    .badge-paused {
-      color: #E6DDD4;
-    }
-
-    .player-controls-bar {
-      padding: var(--spacing-3) var(--spacing-4);
-      background-color: var(--color-surface);
-      border-top: var(--border-width) solid var(--color-border);
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-3);
-    }
-
-    .time-display {
-      font-size: var(--text-xs);
-      font-family: monospace;
-      color: var(--color-text-muted);
-      white-space: nowrap;
-    }
-
-    .scrubber-range {
-      flex: 1;
-      cursor: pointer;
-      accent-color: var(--color-primary);
-    }
-
-    .control-actions {
-      display: flex;
-      gap: var(--spacing-2);
-    }
-
-    .ctrl-btn {
-      padding: var(--spacing-1) var(--spacing-2);
-      font-size: var(--text-xs);
-      background-color: var(--color-surface-muted);
-      border: var(--border-width) solid var(--color-border);
       border-radius: var(--radius-btn);
+      background: #f5f9f6;
+      color: var(--color-primary);
+      font-weight: 700;
       cursor: pointer;
-      color: var(--color-text-main);
     }
 
-    .active-module-bar {
+    .player-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
       padding: var(--spacing-3) var(--spacing-4);
-      background-color: var(--color-surface-muted);
-      font-size: var(--text-xs);
-      display: flex;
-      gap: var(--spacing-2);
       border-top: var(--border-width) solid var(--color-border);
-    }
-
-    /* Guide Container */
-    .guide-container {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-6);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-    }
-
-    .guide-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: var(--spacing-3);
-      border-bottom: var(--border-width) solid var(--color-border);
-    }
-
-    .guide-title {
-      font-size: var(--text-lg);
-      font-weight: 800;
-    }
-
-    .guide-progress {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
-      align-items: flex-end;
-      font-size: var(--text-xs);
-      font-weight: 700;
-      color: var(--color-primary);
-    }
-
-    .progress-track {
-      width: 100px;
-      height: 6px;
-      background-color: var(--color-surface-muted);
-      border-radius: var(--radius-pill);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background-color: var(--color-primary);
-      transition: width var(--transition-normal);
-    }
-
-    .steps-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-3);
-    }
-
-    .step-card {
-      display: flex;
-      gap: var(--spacing-3);
-      padding: var(--spacing-3);
-      border-radius: var(--radius-sm);
-      border: var(--border-width) solid var(--color-border);
-      background-color: var(--color-surface-muted);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .step-card:hover {
-      border-color: var(--color-primary);
-    }
-
-    .step-completed {
-      background-color: #F1F6F0;
-      border-color: var(--color-primary);
-    }
-
-    .step-checkbox {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: var(--text-xs);
-      font-weight: 700;
-      flex-shrink: 0;
-      color: var(--color-primary);
-    }
-
-    .step-completed .step-checkbox {
-      background-color: var(--color-primary);
-      color: #FFFFFF;
-      border-color: var(--color-primary);
-    }
-
-    .step-content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
-    }
-
-    .step-heading {
-      font-size: var(--text-sm);
-      font-weight: 700;
-    }
-
-    .step-desc {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      line-height: var(--line-height-normal);
-    }
-
-    .step-hint {
-      font-size: 10px;
-      color: var(--color-primary);
-      font-weight: 600;
-    }
-
-    .pro-tip-box {
-      display: flex;
-      gap: var(--spacing-3);
-      padding: var(--spacing-3);
-      background-color: #FBF4F0;
-      border-left: 3px solid var(--color-accent);
-      border-radius: var(--radius-sm);
-      font-size: var(--text-xs);
-      line-height: var(--line-height-normal);
-      color: var(--color-text-main);
-    }
-
-    .tip-icon {
-      font-size: var(--text-base);
-    }
-
-    /* Diagnostics & Tools */
-    .diagnostics-section {
-      padding: var(--spacing-16) 0;
-      border-top: var(--border-width) solid var(--color-border);
-    }
-
-    .diagnostics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-8);
-    }
-
-    .calc-card {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-6);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-4);
-    }
-
-    .calc-title {
-      font-size: var(--text-xl);
-      font-weight: 800;
-    }
-
-    .calc-desc {
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-    }
-
-    .matrix-selector {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-    }
-
-    .selector-label {
-      font-size: var(--text-xs);
-      font-weight: 700;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-    }
-
-    .option-buttons {
-      display: flex;
-      gap: var(--spacing-2);
       flex-wrap: wrap;
     }
 
-    .sf-btn-sm {
-      padding: var(--spacing-2) var(--spacing-3);
+    .time {
+      font-family: var(--font-mono);
       font-size: var(--text-xs);
-    }
-
-    .calc-result {
-      background-color: var(--color-surface-muted);
-      border-left: 4px solid var(--color-primary);
-      border-radius: var(--radius-sm);
-      padding: var(--spacing-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
-    }
-
-    .result-number {
-      font-family: var(--font-heading);
-      font-size: var(--text-2xl);
-      font-weight: 800;
-      color: var(--color-primary);
-    }
-
-    .result-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      font-weight: 700;
       color: var(--color-text-muted);
-      letter-spacing: 0.05em;
     }
 
-    .result-advice {
+    .scrubber {
+      flex: 1;
+      min-width: 120px;
+      accent-color: var(--color-primary);
+    }
+
+    .text-btn {
+      border: none;
+      background: transparent;
+      color: var(--color-accent);
+      font: inherit;
       font-size: var(--text-xs);
-      color: var(--color-text-main);
-      margin-top: var(--spacing-2);
-      line-height: var(--line-height-normal);
+      font-weight: 700;
+      cursor: pointer;
     }
 
-    /* Seasonal Newsletter */
-    .newsletter-section {
-      padding: var(--spacing-16) 0;
+    .module-line {
+      padding: var(--spacing-3) var(--spacing-4);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      background: var(--color-surface-muted);
       border-top: var(--border-width) solid var(--color-border);
     }
 
-    .newsletter-card {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-8);
+    .guide {
+      padding: var(--spacing-6);
+    }
+
+    .guide-head {
       display: flex;
-      flex-direction: column;
-      gap: var(--spacing-6);
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .newsletter-header {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-
-    .newsletter-title {
-      font-size: var(--text-2xl);
-      font-weight: 800;
-    }
-
-    .newsletter-subtitle {
+      justify-content: space-between;
+      gap: var(--spacing-3);
+      margin-bottom: var(--spacing-4);
       font-size: var(--text-sm);
       color: var(--color-text-muted);
-      max-width: 540px;
     }
 
-    .season-tabs {
+    .guide-head h3 {
+      color: var(--color-text-main);
+      font-size: var(--text-lg);
+    }
+
+    .steps {
+      list-style: none;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--spacing-2);
+      gap: var(--spacing-3);
     }
 
-    .season-tab {
+    .step {
+      width: 100%;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--spacing-1);
+      gap: var(--spacing-3);
+      text-align: left;
       padding: var(--spacing-3);
-      background-color: var(--color-surface-muted);
       border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
+      background: var(--color-bg);
       cursor: pointer;
-      transition: all var(--transition-fast);
+      transition: border-color var(--transition-fast);
     }
 
-    .season-tab-active {
-      background-color: var(--color-primary);
+    .step:hover,
+    .step-done {
       border-color: var(--color-primary);
-      color: #FFFFFF;
     }
 
-    .season-icon {
-      font-size: var(--text-xl);
-    }
-
-    .season-name {
+    .step-index {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      border: var(--border-width) solid var(--color-border);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
       font-size: var(--text-xs);
       font-weight: 700;
-    }
-
-    .season-preview-box {
-      background-color: var(--color-surface-muted);
-      border-radius: var(--radius-sm);
-      padding: var(--spacing-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
-      font-size: var(--text-xs);
-    }
-
-    .season-focus {
       color: var(--color-primary);
-      font-weight: 700;
+    }
+
+    .step-done .step-index {
+      background: var(--color-primary);
+      color: #f5f9f6;
+      border-color: var(--color-primary);
+    }
+
+    .step-body {
+      display: grid;
+      gap: var(--spacing-1);
       font-size: var(--text-sm);
     }
 
-    .season-detail {
+    .step-body span {
       color: var(--color-text-muted);
+      font-size: var(--text-xs);
       line-height: var(--line-height-normal);
     }
 
-    .subscription-form-wrapper {
+    .labs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-6);
+    }
+
+    .lab-panel {
+      padding: var(--spacing-6);
+      display: grid;
+      gap: var(--spacing-3);
+    }
+
+    .lab-panel h3 {
+      font-size: var(--text-xl);
+    }
+
+    .lab-help {
+      font-size: var(--text-xs);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .option-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-2);
+    }
+
+    .option {
+      padding: var(--spacing-2) var(--spacing-3);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-btn);
+      background: var(--color-bg);
+      color: var(--color-text-main);
+      font: inherit;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .option-active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #f5f9f6;
+    }
+
+    .lab-result {
       margin-top: var(--spacing-2);
+      padding: var(--spacing-4);
+      border-left: 3px solid var(--color-accent);
+      background: var(--color-surface-muted);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .result-value {
+      font-family: var(--font-heading);
+      font-size: var(--text-2xl);
+      color: var(--color-primary);
+      margin-bottom: var(--spacing-2);
+    }
+
+    .result-note {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .dispatch {
+      border-top: var(--border-width) solid var(--color-border);
+    }
+
+    .dispatch-inner {
+      max-width: 42rem;
+    }
+
+    .season-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-2);
+      margin-bottom: var(--spacing-6);
+    }
+
+    .season {
+      padding: var(--spacing-3);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-btn);
+      background: var(--color-surface);
+      font: inherit;
+      font-size: var(--text-sm);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .season-active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #f5f9f6;
+    }
+
+    .season-copy {
+      display: grid;
+      gap: var(--spacing-2);
+      margin-bottom: var(--spacing-6);
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .season-focus {
+      font-family: var(--font-heading);
+      font-size: var(--text-lg);
+      color: var(--color-text-main);
     }
 
     .sub-form {
       display: flex;
       gap: var(--spacing-2);
+      flex-wrap: wrap;
     }
 
     .sub-input {
       flex: 1;
-      padding: var(--spacing-3) var(--spacing-4);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-btn);
-      background-color: var(--color-surface-muted);
-      color: var(--color-text-main);
-      font-size: var(--text-sm);
-      outline: none;
+      min-width: 220px;
     }
 
-    .sub-input:focus {
-      border-color: var(--color-primary);
-    }
-
-    .sub-btn {
-      white-space: nowrap;
-    }
-
-    .sub-success-message {
+    .sub-success {
       padding: var(--spacing-4);
-      background-color: #F1F6F0;
-      border: var(--border-width) solid var(--color-primary);
-      border-radius: var(--radius-btn);
+      border: var(--border-width) solid var(--color-secondary);
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--color-secondary) 12%, var(--color-surface));
       color: var(--color-primary);
-      font-size: var(--text-sm);
       font-weight: 600;
-      text-align: center;
     }
 
-    /* Testimonials */
-    .testimonials-section {
-      padding: var(--spacing-16) 0;
+    .footer {
+      margin-top: auto;
       border-top: var(--border-width) solid var(--color-border);
+      background: var(--color-surface);
+      padding: var(--spacing-8) 0;
     }
 
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: var(--spacing-6);
-    }
-
-    .testimonial-card {
-      background-color: var(--color-surface);
-      border: var(--border-width) solid var(--color-border);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: var(--spacing-6);
+    .footer-inner {
       display: flex;
-      flex-direction: column;
-      gap: var(--spacing-3);
       justify-content: space-between;
-    }
-
-    .testimonial-stars {
-      color: var(--color-accent);
-      font-size: var(--text-sm);
-      letter-spacing: 0.1em;
-    }
-
-    .testimonial-quote {
-      font-size: var(--text-sm);
-      font-style: italic;
-      color: var(--color-text-main);
-      line-height: var(--line-height-relaxed);
-    }
-
-    .testimonial-author {
-      display: flex;
-      flex-direction: column;
-      font-size: var(--text-xs);
-      color: var(--color-text-muted);
-      border-top: var(--border-width) solid var(--color-border);
-      padding-top: var(--spacing-2);
-    }
-
-    /* Footer */
-    .footer-root {
-      background-color: var(--color-surface);
-      border-top: var(--border-width) solid var(--color-border);
-      padding: var(--spacing-12) 0 var(--spacing-6);
-      margin-top: var(--spacing-12);
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-8);
-    }
-
-    .footer-top {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-2);
+      gap: var(--spacing-4);
+      flex-wrap: wrap;
     }
 
     .footer-brand {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--color-primary);
     }
 
-    .footer-desc {
-      font-size: var(--text-sm);
-      color: var(--color-text-muted);
-      max-width: 520px;
-    }
-
-    .footer-bottom {
-      display: flex;
-      justify-content: space-between;
-      border-top: var(--border-width) solid var(--color-border);
-      padding-top: var(--spacing-4);
+    .footer-meta {
       font-size: var(--text-xs);
       color: var(--color-text-muted);
     }
 
-    /* Responsive */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     @media (max-width: 900px) {
-      .hero-grid {
+      .filters,
+      .studio-layout,
+      .labs-grid {
         grid-template-columns: 1fr;
       }
-      .hero-visual {
-        order: -1;
+
+      .nav-links {
+        gap: var(--spacing-3);
       }
-      .preview-layout {
-        grid-template-columns: 1fr;
+
+      .hero {
+        min-height: 92svh;
       }
-      .diagnostics-grid {
-        grid-template-columns: 1fr;
-      }
-      .nav-search {
-        display: none;
-      }
-      .footer-bottom {
-        flex-direction: column;
-        gap: var(--spacing-2);
-      }
-      .hero-stats {
+
+      .season-row {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-  `
-  ]
+
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+      }
+    }
+  `,
 })
 export class ArchetypeViewComponent {
-  // Signals for Search and Filters
-  readonly searchQuery = signal<string>('');
-  readonly selectedCategory = signal<string>('All Categories');
-  readonly selectedLevel = signal<string>('All Levels');
+  readonly searchQuery = signal('');
+  readonly selectedCategory = signal('All Categories');
+  readonly selectedLevel = signal('All Levels');
 
-  // Signals for Interactive Lesson Studio
-  readonly activeCourseId = signal<string>('course-monstera-101');
-  readonly isPlaying = signal<boolean>(false);
-  readonly isMuted = signal<boolean>(false);
-  readonly playbackSeconds = signal<number>(142);
-  readonly playbackSpeed = signal<string>('1x');
+  readonly activeCourseId = signal('course-monstera-101');
+  readonly isPlaying = signal(false);
+  readonly isMuted = signal(false);
+  readonly playbackSeconds = signal(142);
+  readonly playbackSpeed = signal('1x');
   readonly completedSteps = signal<number[]>([1]);
 
-  // Signals for Diagnostics
-  readonly selectedOrientation = signal<string>('east-west');
-  readonly selectedSubstrate = signal<string>('aroid');
-  readonly selectedPot = signal<string>('terracotta');
+  readonly selectedOrientation = signal('east-west');
+  readonly selectedSubstrate = signal('aroid');
+  readonly selectedPot = signal('terracotta');
 
-  // Signals for Newsletter
-  readonly selectedSeason = signal<string>('spring');
-  readonly newsletterEmail = signal<string>('');
-  readonly isSubscribed = signal<boolean>(false);
+  readonly selectedSeason = signal('spring');
+  readonly newsletterEmail = signal('');
+  readonly isSubscribed = signal(false);
 
   readonly categories = [
     'All Categories',
@@ -1630,57 +1041,60 @@ export class ArchetypeViewComponent {
 
   readonly levels = ['All Levels', 'Beginner', 'Intermediate', 'Advanced'];
 
+  readonly substrates = [
+    { key: 'aroid', label: 'Chunky aroid mix' },
+    { key: 'peat', label: 'Peat / perlite' },
+    { key: 'succulent', label: 'Gritty succulent' },
+  ];
+
+  readonly pots = [
+    { key: 'terracotta', label: 'Terracotta' },
+    { key: 'ceramic', label: 'Glazed ceramic' },
+    { key: 'plastic', label: 'Nursery plastic' },
+  ];
+
   readonly courses = signal<Course[]>([
     {
       id: 'course-monstera-101',
-      title: 'Monstera Deliciosa: From Cuttings to Fenestrated Giant',
+      title: 'Monstera Deliciosa: cuttings to fenestrated giant',
       instructor: 'Dr. Elena Vance, Botanist',
       level: 'Beginner',
       category: 'Tropical Foliage',
       duration: '2h 45m',
       lessonsCount: 8,
-      rating: 4.9,
-      studentsCount: 1420,
-      badge: 'Bestseller',
-      summary: 'Master node propagation, moss pole training, and ideal light ratios for dramatic leaf splits.',
+      summary: 'Node propagation, moss-pole training, and light ratios for dramatic leaf splits.',
       modules: [
-        { title: 'Substrate & Aeration: Eliminating Root Rot', duration: '22 min' },
-        { title: 'Moss Poles vs Trellises: Vertical Growth Mechanics', duration: '35 min' },
-        { title: 'Lighting & Nutrient Regimes for Giant Leaves', duration: '28 min' },
+        { title: 'Substrate & aeration', duration: '22 min' },
+        { title: 'Moss poles vs trellises', duration: '35 min' },
+        { title: 'Nutrient regimes for giant leaves', duration: '28 min' },
       ],
     },
     {
       id: 'course-light-calculator',
-      title: 'Light Diagnostics: Foot-Candles, Lux & Window Orientation',
+      title: 'Light diagnostics: foot-candles and orientation',
       instructor: 'Julian Croft, Horticulturist',
       level: 'All Levels',
       category: 'Low-Light Survivors',
       duration: '1h 30m',
       lessonsCount: 5,
-      rating: 4.8,
-      studentsCount: 980,
-      badge: 'Essential',
-      summary: 'Understand north vs south exposure and optimize grow lights for winter indoor survival.',
+      summary: 'Read north vs south exposure and place grow lights for winter survival.',
       modules: [
-        { title: 'The Physics of Photosynthesis Indoors', duration: '18 min' },
-        { title: 'Using a Light Meter Like a Horticultural Pro', duration: '25 min' },
+        { title: 'Photosynthesis indoors', duration: '18 min' },
+        { title: 'Using a light meter', duration: '25 min' },
       ],
     },
     {
       id: 'course-pest-defense',
-      title: 'Organic Pest Eradication: Thrips, Spider Mites & Fungus Gnats',
-      instructor: 'Samantha Wei, Integrated Pest Specialist',
+      title: 'Organic pest eradication: thrips to fungus gnats',
+      instructor: 'Samantha Wei, IPM Specialist',
       level: 'Intermediate',
       category: 'Pest Eradication',
       duration: '2h 10m',
       lessonsCount: 6,
-      rating: 4.95,
-      studentsCount: 2100,
-      badge: 'Life Saver',
-      summary: 'Non-toxic biological controls, beneficial nematodes, and predatory mites that save collections.',
+      summary: 'Biological controls, nematodes, and predatory mites that protect collections.',
       modules: [
-        { title: 'Early Identification & Inspection Guide', duration: '20 min' },
-        { title: 'Beneficial Insects Deployment Strategies', duration: '30 min' },
+        { title: 'Early identification', duration: '20 min' },
+        { title: 'Beneficial insect strategies', duration: '30 min' },
       ],
     },
   ]);
@@ -1688,85 +1102,54 @@ export class ArchetypeViewComponent {
   readonly careSteps = [
     {
       number: 1,
-      title: 'Substrate Aeration & Root Mass Examination',
-      instruction: 'Unpot specimen, remove degraded nursery soil, and inspect root system for squishy brown necrosis.',
+      title: 'Inspect root mass',
+      instruction: 'Unpot, clear degraded soil, and check for soft brown necrosis.',
     },
     {
       number: 2,
-      title: 'The 40/30/30 Aroid Soil Formula Mix',
-      instruction: 'Combine 40% coarse pumice/perlite, 30% orchid bark, and 30% buffered coco coir with worm castings.',
+      title: 'Mix 40/30/30 aroid soil',
+      instruction: 'Combine pumice, orchid bark, and buffered coco with worm castings.',
     },
     {
       number: 3,
-      title: 'Sanitize Pruners & Remove Debris',
-      instruction: 'Wipe stainless shears with 70% isopropyl alcohol and cleanly sever dead roots above rot line.',
+      title: 'Sanitize and prune',
+      instruction: 'Wipe shears with isopropyl and sever dead roots above the rot line.',
     },
     {
       number: 4,
-      title: 'Sphagnum Pole Staking & Hydration',
-      instruction: 'Anchor moist moss pole behind main stem and fasten aerial nodes with non-constricting garden velcro.',
+      title: 'Stake the moss pole',
+      instruction: 'Anchor moist sphagnum behind the stem and fasten aerial nodes loosely.',
     },
   ];
 
   readonly orientations = [
-    { key: 'south', label: 'South Window (High Direct)' },
-    { key: 'east-west', label: 'East/West Window (Medium Bright)' },
-    { key: 'north', label: 'North Window (Low Gentle)' },
+    { key: 'south', label: 'South (high direct)' },
+    { key: 'east-west', label: 'East / West' },
+    { key: 'north', label: 'North (low)' },
   ];
 
   readonly seasons = [
-    { key: 'spring', name: 'Spring', icon: '🌸' },
-    { key: 'summer', name: 'Summer', icon: '☀️' },
-    { key: 'autumn', name: 'Autumn', icon: '🍂' },
-    { key: 'winter', name: 'Winter', icon: '❄️' },
+    { key: 'spring', name: 'Spring' },
+    { key: 'summer', name: 'Summer' },
+    { key: 'autumn', name: 'Autumn' },
+    { key: 'winter', name: 'Winter' },
   ];
 
-  readonly testimonials = [
-    {
-      quote: 'My fiddle leaf fig dropped half its leaves before this masterclass. Two months later, four massive fenestrated leaves sprouted!',
-      author: 'Marcus Thorne',
-      role: 'Apartment Gardener, Barcelona',
-    },
-    {
-      quote: 'The light diagnostics calculator completely changed my perspective on window lux. Not a single yellow leaf all winter.',
-      author: 'Clara Lindqvist',
-      role: 'Botanical Designer, Stockholm',
-    },
-    {
-      quote: 'Beneficial predatory mites saved 40 rare monsteras from thrips in 10 days. The best practical guide online.',
-      author: 'Julian Croft',
-      role: 'Aroid Collector, Berlin',
-    },
-  ];
+  readonly activeCourse = computed(
+    () => this.courses().find((c) => c.id === this.activeCourseId()) ?? this.courses()[0],
+  );
 
-  // Computed Properties
-  readonly activeCourse = computed(() => {
-    return this.courses().find((c) => c.id === this.activeCourseId()) || this.courses()[0];
-  });
+  readonly filteredCourses = computed(() =>
+    filterCourses(this.courses(), {
+      query: this.searchQuery(),
+      category: this.selectedCategory(),
+      level: this.selectedLevel(),
+    }),
+  );
 
-  readonly filteredCourses = computed(() => {
-    const q = this.searchQuery().toLowerCase().trim();
-    const cat = this.selectedCategory();
-    const lvl = this.selectedLevel();
-
-    return this.courses().filter((c) => {
-      const matchesQuery =
-        !q ||
-        c.title.toLowerCase().includes(q) ||
-        c.instructor.toLowerCase().includes(q) ||
-        c.summary.toLowerCase().includes(q) ||
-        c.category.toLowerCase().includes(q);
-
-      const matchesCat = cat === 'All Categories' || c.category === cat;
-      const matchesLvl = lvl === 'All Levels' || c.level.includes(lvl);
-
-      return matchesQuery && matchesCat && matchesLvl;
-    });
-  });
-
-  readonly guideProgressPercent = computed(() => {
-    return Math.round((this.completedSteps().length / this.careSteps.length) * 100);
-  });
+  readonly guideProgressPercent = computed(() =>
+    Math.round((this.completedSteps().length / this.careSteps.length) * 100),
+  );
 
   readonly formattedPlaybackTime = computed(() => {
     const totalSecs = this.playbackSeconds();
@@ -1780,18 +1163,17 @@ export class ArchetypeViewComponent {
       case 'south':
         return {
           footCandles: '1,500 – 3,000',
-          recommendation: 'Fiddle Leaf Fig, Cacti, Succulents, Citrus, Bird of Paradise.',
+          recommendation: 'Fiddle leaf fig, citrus, bird of paradise, succulents.',
         };
       case 'north':
         return {
           footCandles: '200 – 400',
-          recommendation: 'Snake Plant, ZZ Plant, Cast Iron Plant, Pothos, Peace Lily.',
+          recommendation: 'Snake plant, ZZ, cast iron, pothos, peace lily.',
         };
-      case 'east-west':
       default:
         return {
           footCandles: '600 – 1,200',
-          recommendation: 'Monstera Deliciosa, Calathea, Philodendron, Anthurium, Ferns.',
+          recommendation: 'Monstera, calathea, philodendron, anthurium, ferns.',
         };
     }
   });
@@ -1802,64 +1184,61 @@ export class ArchetypeViewComponent {
 
     if (pot === 'terracotta') {
       return {
-        frequency: 'Every 5 – 7 Days',
-        note: 'Porous terracotta accelerates substrate evaporation; check moisture meter regularly.',
-      };
-    } else if (sub === 'succulent') {
-      return {
-        frequency: 'Every 14 – 21 Days',
-        note: 'Coarse mineral grit holds minimal water; soak thoroughly then allow 100% dry down.',
-      };
-    } else {
-      return {
-        frequency: 'Every 8 – 10 Days',
-        note: 'Excellent root zone moisture stability; probe top 2 inches before watering.',
+        frequency: 'Every 5 – 7 days',
+        note: 'Porous clay accelerates evaporation; probe moisture before each pour.',
       };
     }
+    if (sub === 'succulent') {
+      return {
+        frequency: 'Every 14 – 21 days',
+        note: 'Mineral grit holds little water; soak thoroughly, then full dry-down.',
+      };
+    }
+    return {
+      frequency: 'Every 8 – 10 days',
+      note: 'Stable root-zone moisture; check the top two inches before watering.',
+    };
   });
 
   readonly currentSeasonTip = computed(() => {
     switch (this.selectedSeason()) {
-      case 'spring':
-        return {
-          name: 'Spring',
-          focus: 'Repotting, Substrate Refresh & Balanced Nutrients',
-          detail: 'Days are lengthening. Increase watering frequency and apply half-strength organic fertilizer as root tips activate.',
-        };
       case 'summer':
         return {
           name: 'Summer',
-          focus: 'High Hydration, Misting & Preventive Pest Scouting',
-          detail: 'Peak transpiration. Monitor soil moisture daily and inspect leaf undersides for spider mites during heat waves.',
+          focus: 'Hydration, scouting, heat defense',
+          detail: 'Peak transpiration. Check moisture daily and inspect undersides for mites.',
         };
       case 'autumn':
         return {
           name: 'Autumn',
-          focus: 'Gradual Daylight Transition & Grow Light Placement',
-          detail: 'Natural foot-candles drop sharply. Move plants closer to south windows or supplement with full-spectrum LEDs.',
+          focus: 'Daylight transition and grow-light placement',
+          detail: 'Natural foot-candles drop. Shift plants south or add full-spectrum LEDs.',
         };
       case 'winter':
-      default:
         return {
           name: 'Winter',
-          focus: 'Cold Draft Protection, Humidity Defense & Dormancy Rest',
-          detail: 'Cut watering by 50%. Keep away from heating vents and run a cool-mist humidifier to sustain 55%+ ambient humidity.',
+          focus: 'Draft protection and dormancy rest',
+          detail: 'Cut watering by half. Keep off heating vents and hold humidity near 55%.',
+        };
+      default:
+        return {
+          name: 'Spring',
+          focus: 'Repotting, substrate refresh, balanced feed',
+          detail: 'Days lengthen. Increase water and apply half-strength organic fertilizer.',
         };
     }
   });
 
-  // Event Handlers
   onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchQuery.set(target.value);
+    this.searchQuery.set((event.target as HTMLInputElement).value);
   }
 
-  setCategory(cat: string): void {
-    this.selectedCategory.set(cat);
+  onCategoryChange(event: Event): void {
+    this.selectedCategory.set((event.target as HTMLSelectElement).value);
   }
 
-  setLevel(lvl: string): void {
-    this.selectedLevel.set(lvl);
+  onLevelChange(event: Event): void {
+    this.selectedLevel.set((event.target as HTMLSelectElement).value);
   }
 
   resetFilters(): void {
@@ -1870,10 +1249,7 @@ export class ArchetypeViewComponent {
 
   selectCourse(id: string): void {
     this.activeCourseId.set(id);
-    const element = document.getElementById('lesson-preview');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.getElementById('lesson-preview')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   togglePlay(): void {
@@ -1891,8 +1267,7 @@ export class ArchetypeViewComponent {
   }
 
   onScrub(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.playbackSeconds.set(Number(target.value));
+    this.playbackSeconds.set(Number((event.target as HTMLInputElement).value));
   }
 
   isStepCompleted(stepNum: number): boolean {
@@ -1901,13 +1276,12 @@ export class ArchetypeViewComponent {
 
   toggleStep(stepNum: number): void {
     this.completedSteps.update((steps) =>
-      steps.includes(stepNum) ? steps.filter((s) => s !== stepNum) : [...steps, stepNum]
+      steps.includes(stepNum) ? steps.filter((s) => s !== stepNum) : [...steps, stepNum],
     );
   }
 
   onEmailInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.newsletterEmail.set(target.value);
+    this.newsletterEmail.set((event.target as HTMLInputElement).value);
   }
 
   onSubscribe(event: Event): void {

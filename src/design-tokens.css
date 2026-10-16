@@ -1,45 +1,65 @@
-/* SiteForge Design.md Compiled Tokens: Warm Organic */
-:root,
-:root[data-theme="warm-organic"] {
-  --color-bg: #F7F5F0;
-  --color-surface: #FFFFFF;
-  --color-surface-muted: #EFECE6;
-  --color-text-main: #1E281E;
-  --color-text-muted: #556B55;
-  --color-primary: #2D5A27;
-  --color-primary-hover: #22451E;
-  --color-secondary: #8FBC8F;
-  --color-secondary-hover: #7DAA7D;
-  --color-accent: #C86D51;
-  --color-accent-hover: #B55C41;
-  --color-border: #E5E0D8;
-
-  --font-heading: 'Fraunces', Georgia, serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
-
-  --border-width: 1px;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
-  --radius-card: 16px;
-  --radius-btn: 9999px;
-  --radius-pill: 9999px;
-
-  --shadow-flat: none;
-  --shadow-card: 0 10px 30px -10px rgba(45, 90, 39, 0.08);
-  --shadow-ambient: 0 4px 20px rgba(45, 90, 39, 0.04);
-  --shadow-button: 0 4px 14px rgba(45, 90, 39, 0.18);
-  --backdrop-blur: 0px;
-
-  /* Standard Spatial Scales */
+/* SiteForge Design.md Compiled Tokens: warm-organic — Greenhouse Lab (SF-09) */
+:root {
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
   --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
   --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
   --spacing-12: 3rem;
   --spacing-16: 4rem;
   --container-max-w: 1200px;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root,
+:root[data-theme='warm-organic'] {
+  --color-bg: #e7eeea;
+  --color-surface: #f5f9f6;
+  --color-surface-muted: #d2ddd6;
+  --color-text-main: #0f241c;
+  --color-text-muted: #3d5a4c;
+  --color-primary: #145c45;
+  --color-primary-hover: #0e4634;
+  --color-secondary: #2f8f6b;
+  --color-secondary-hover: #267a5a;
+  --color-accent: #1a5f7a;
+  --color-accent-hover: #144a5f;
+  --color-border: #a8bdb2;
+
+  --font-heading: 'Syne', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --border-width: 1px;
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 9999px;
+  --radius-card: 8px;
+  --radius-btn: 6px;
+
+  --shadow-flat: none;
+  --shadow-card: 0 6px 20px rgba(15, 36, 28, 0.08);
+  --shadow-ambient: 0 2px 10px rgba(15, 36, 28, 0.05);
+  --shadow-button: 0 2px 8px rgba(20, 92, 69, 0.22);
+  --backdrop-blur: 0px;
 }
