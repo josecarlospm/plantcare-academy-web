@@ -22,7 +22,7 @@ export interface Course {
 
 @Component({
   selector: 'sf-archetype-view',
-  template: \`
+  template: `
     <div class="platform-shell">
       <!-- Top Navigation Bar -->
       <header class="top-nav">
@@ -41,7 +41,7 @@ export interface Course {
               class="search-bar"
               placeholder="Search masterclasses, pests, light guides..."
               [value]="searchQuery()"
-              (input)="onSearchInput(\$event)"
+              (input)="onSearchInput($event)"
             />
           </div>
 
@@ -275,7 +275,7 @@ export interface Course {
                   min="0"
                   max="1320"
                   [value]="playbackSeconds()"
-                  (input)="onScrub(\$event)"
+                  (input)="onScrub($event)"
                 />
                 <div class="control-actions">
                   <button type="button" class="ctrl-btn" (click)="toggleMute()">
@@ -502,13 +502,13 @@ export interface Course {
                   ✓ Success! You are subscribed with <strong>{{ newsletterEmail() }}</strong>. Look out for the {{ currentSeasonTip().name }} botanical guide in your inbox.
                 </div>
               } @else {
-                <form class="sub-form" (submit)="onSubscribe(\$event)">
+                <form class="sub-form" (submit)="onSubscribe($event)">
                   <input
                     type="email"
                     class="sub-input"
                     placeholder="Enter your email (e.g. botanist@indoorjungle.com)"
                     [value]="newsletterEmail()"
-                    (input)="onEmailInput(\$event)"
+                    (input)="onEmailInput($event)"
                     required
                   />
                   <button type="submit" class="sf-btn sf-btn-primary sub-btn">
@@ -559,8 +559,8 @@ export interface Course {
         </div>
       </footer>
     </div>
-  \`,
-  styles: [\`
+  `,
+  styles: [`
     .platform-shell {
       min-height: 100vh;
       display: flex;
@@ -1592,7 +1592,7 @@ export interface Course {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-  \`
+  `
   ]
 })
 export class ArchetypeViewComponent {
@@ -1772,7 +1772,7 @@ export class ArchetypeViewComponent {
     const totalSecs = this.playbackSeconds();
     const mins = Math.floor(totalSecs / 60);
     const secs = totalSecs % 60;
-    return \`\${mins.toString().padStart(2, '0')}:\${secs.toString().padStart(2, '0')}\`;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   });
 
   readonly currentLightData = computed(() => {
