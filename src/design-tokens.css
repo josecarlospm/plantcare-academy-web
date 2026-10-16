@@ -1,0 +1,45 @@
+/* SiteForge Design.md Compiled Tokens: Warm Organic */
+:root,
+:root[data-theme="warm-organic"] {
+  --color-bg: #F7F5F0;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #EFECE6;
+  --color-text-main: #1E281E;
+  --color-text-muted: #556B55;
+  --color-primary: #2D5A27;
+  --color-primary-hover: #22451E;
+  --color-secondary: #8FBC8F;
+  --color-secondary-hover: #7DAA7D;
+  --color-accent: #C86D51;
+  --color-accent-hover: #B55C41;
+  --color-border: #E5E0D8;
+
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  --border-width: 1px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-card: 16px;
+  --radius-btn: 9999px;
+  --radius-pill: 9999px;
+
+  --shadow-flat: none;
+  --shadow-card: 0 10px 30px -10px rgba(45, 90, 39, 0.08);
+  --shadow-ambient: 0 4px 20px rgba(45, 90, 39, 0.04);
+  --shadow-button: 0 4px 14px rgba(45, 90, 39, 0.18);
+  --backdrop-blur: 0px;
+
+  /* Standard Spatial Scales */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --container-max-w: 1200px;
+}
